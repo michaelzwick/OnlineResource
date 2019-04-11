@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+ <Document>
+   <Style id="body">
+        <LineStyle>
+            <color>ffD2D2D2</color>
+        </LineStyle>
+        <PolyStyle>
+            <color>ffD2D2D2</color>
+        </PolyStyle>
+    </Style>
+	<Style id="dach">
+        <LineStyle>
+            <color>ff505050</color>
+        </LineStyle>
+        <PolyStyle>
+            <color>ff505050</color>
+        </PolyStyle>
+    </Style>
+	
+  <Placemark>
+    <name>FHNW</name>
+	<styleUrl>#body</styleUrl>
+    <Polygon>
+      <extrude>1</extrude>
+      <altitudeMode>absolute</altitudeMode>
+      <outerBoundaryIs>        
+        <LinearRing>
+          <coordinates>   <!-- right hand rule: https://developers.google.com/kml/documentation/kmlreference?hl=cs#polygon-->
+           7.64179,47.53529,350
+		   7.64133,47.53479,350
+	       7.64214,47.53446,350
+		   7.64259,47.53495,350
+		   7.64179,47.53529,350   <!-- the same coordinate as the first one-->
+          </coordinates>
+        </LinearRing>
+      </outerBoundaryIs>      
+    </Polygon>
+  </Placemark>
+  
+   <Placemark>
+    <name>FHNW</name>
+	<styleUrl>#dach</styleUrl>
+    <Polygon>
+      <extrude>0</extrude>
+      <altitudeMode>absolute</altitudeMode>
+      <outerBoundaryIs>        
+        <LinearRing>
+          <coordinates>   <!-- right hand rule: https://developers.google.com/kml/documentation/kmlreference?hl=cs#polygon-->
+           7.64179,47.53529,350.1
+		   7.64133,47.53479,350.1
+	       7.64214,47.53446,350.1
+		   7.64259,47.53495,350.1
+		   7.64179,47.53529,350.1  <!-- the same coordinate as the first one-->
+          </coordinates>
+        </LinearRing>
+      </outerBoundaryIs>      
+    </Polygon>
+  </Placemark>
+ </Document>
+</kml>  
