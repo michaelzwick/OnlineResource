@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+ <Document>
+   <Style id="line">
+        <LineStyle>
+            <color>FF00FFFF</color>
+        </LineStyle>
+        <PolyStyle>
+            <color>00000000</color>
+        </PolyStyle>
+    </Style>
+  
+  <Placemark> 
+    <name>Cube</name>
+	<styleUrl>#line</styleUrl>
+    <LineString>
+	  <altitudeMode>absolute</altitudeMode>
+      <coordinates>   <!-- right hand rule: https://developers.google.com/kml/documentation/kmlreference?hl=cs#polygon-->
+        7.4385668155238550,46.951037900254320,605
+		7.4386981766190345,46.951037901345195,605
+		7.4386981751359835,46.951127853061720,605
+		7.4385668138207130,46.951127851970830,605
+		7.4385668155238550,46.951037900254320,605  <!-- the same coordinate as the first one-->
+      </coordinates>
+   </LineString>
+  </Placemark>  
+  
+  <Placemark> 
+    <name>Cube</name>
+	<styleUrl>#line</styleUrl>
+    <LineString>
+	  <altitudeMode>absolute</altitudeMode>
+      <coordinates>   <!-- right hand rule: https://developers.google.com/kml/documentation/kmlreference?hl=cs#polygon-->
+        7.4385668155238550,46.951037900254320,595
+		7.4386981766190345,46.951037901345195,595
+		7.4386981751359835,46.951127853061720,595
+		7.4385668138207130,46.951127851970830,595
+		7.4385668155238550,46.951037900254320,595  <!-- the same coordinate as the first one-->
+      </coordinates>
+   </LineString>
+  </Placemark>
+  
+  
+  <Placemark> 
+    <name>Cube</name>
+	<styleUrl>#line</styleUrl>
+    <LineString>
+	  <altitudeMode>absolute</altitudeMode>
+      <coordinates>
+        7.4385668155238550,46.951037900254320,605 
+		7.4385668155238550,46.951037900254320,595
+      </coordinates>
+   </LineString>
+  </Placemark>
+  
+  <Placemark> 
+    <name>Cube</name>
+	<styleUrl>#line</styleUrl>
+    <LineString>
+	  <altitudeMode>absolute</altitudeMode>
+      <coordinates>
+        7.4386981766190345,46.951037901345195,605 
+		7.4386981766190345,46.951037901345195,595
+      </coordinates>
+   </LineString>
+  </Placemark>
+  
+  <Placemark> 
+    <name>Cube</name>
+	<styleUrl>#line</styleUrl>
+    <LineString>
+	  <altitudeMode>absolute</altitudeMode>
+      <coordinates>
+        7.4386981751359835,46.951127853061720,605 
+		7.4386981751359835,46.951127853061720,595
+      </coordinates>
+   </LineString>
+  </Placemark>
+  
+  <Placemark> 
+    <name>Cube</name>
+	<styleUrl>#line</styleUrl>
+    <LineString>
+	  <altitudeMode>absolute</altitudeMode>
+      <coordinates>
+        7.4385668138207130,46.951127851970830,605 
+		7.4385668138207130,46.951127851970830,595
+      </coordinates>
+   </LineString>
+  </Placemark>
+  
+ </Document>
+</kml>  
