@@ -1,0 +1,194 @@
+<html>
+<head>
+  <meta charset=utf-8 />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Crowdsourcing swisstopo</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet-src.js"></script>
+  <style>
+	
+	body {
+	  background-color: #ffffff;
+	  font-family: Arial, sans-serif;
+	}
+
+	.scrolling-box {
+	  background-color: #ffffff;
+	  display: block;
+	  overflow-y: scroll;
+	  scroll-behavior: smooth;
+	  text-align: center;
+	  width: 100%;
+	  height: 100%;
+	}
+	
+	.gray-box {
+	  background-color: #E0E0E0;
+	  padding: 1em 1em;
+	}
+	
+	textarea {
+	  font-family: Arial, sans-serif;
+	}
+	
+	formular {
+	  margin-left: auto;
+      margin-right: auto;
+	  width: 500px;
+	  text-align: left;
+	}
+  </style>
+</head>
+<body scroll="no" style="overflow: hidden">
+
+<div class="scrolling-box">
+	<section id="section1">
+	<h1>Crowdsourcing swisstopo</h1>
+	<p>Haben Sie ein neues Seil in der Landschaft entdeckt?<br>
+	Können Sie die Existenz von einem Seil im Datensatz (siehe Karte) bestätigen oder wiederlegen?</p>
+    <img src="https://www.fhnw.ch/plattformen/seilbahn/wp-content/uploads/sites/226/2020/09/GOPR0240-1024x768.jpg" alt="Heuseil" width="400" height="300">
+	<p><i>Heuseil unterhalb von Ruogig (Schwand) Schächental/Uri, Quelle: FHNW</i></p>
+	<a href="#section2"><img src="https://cdn3.iconfinder.com/data/icons/arrow-outline-8/32/down_2_1-48.png" alt="Arrow" width="48" height="48"></a>
+	<br><br>
+	</section>
+	
+	<section id="section2" class="gray-box">
+	<h2>Spezifikation Seil</h2>
+	<p>+ Heuseil<br>+ Lawinensprengseil<br>+ Highline<br>+ Tyrolienne<br>+ Abspannseil<br>+ Seilrückläufe</p>
+    <p>- Transportseil (Materialbahn)<br>- Lift</p>
+	<a href="#section3"><img src="https://cdn3.iconfinder.com/data/icons/arrow-outline-8/32/down_2_1-48.png" alt="Arrow" width="48" height="48"></a>
+	</section>
+	
+	<section id="section3">
+	<p>Markieren Sie den betroffenen Ort in der Karte.</p>
+	<div id="map" style="height: 85%; width: 100%; text-align: left;"></div>
+	<a href="#section4"><img src="https://cdn3.iconfinder.com/data/icons/arrow-outline-8/32/down_2_1-48.png" alt="Arrow" width="48" height="48"></a>
+	<br><br>
+	</section>
+	
+	<section id="section4">
+	<form id="formular" action="">
+	  <label for="gender">Ist an der markierten/gewählten Position ein Seil vorhanden oder ersichtlich? (erforderlich): </label><br>
+	  <input type="radio" name="object" value="true" checked required> Ja<br>
+	  <input type="radio" name="object" value="false"> Nein<br><br>
+	  <label for="description">Beschreibung (erforderlich):</label><br>
+	  <textarea id="desc" name="desc" rows="4" cols="42" required>Test</textarea>
+      <br><br>
+	  <label for="email">E-Mail:</label><br>
+	  <input type="email" id="email" pattern="[^@\s]+@[^@\s]+\.[^@\s]+" size="40"><br><br>
+	  <label for="myfile">Datei hinzufügen:</label>
+      <input type="file" id="myfile" name="myfile" /><br><br>
+	  Mit dem Absenden Ihrer Meldung erklären Sie sich mit den Nutzungsbedingungen [verlinken] einverstanden.<br>
+	  <input type="submit" value="Senden" onclick="return send();">
+	</form>
+	</section>	
+	
+	<section id="section5" class="gray-box">
+	<p>Impressum: Bundesamt für Landestopografie swisstopo | Seftigenstrasse 264 | 3084 Wabern</p>
+	<a href="#section1"><img src="https://cdn3.iconfinder.com/data/icons/arrow-outline-8/32/up_2_1-48.png" alt="Arrow" width="48" height="48"></a>
+	</section>
+</div>
+
+<script>
+// initialize the map
+var map = L.map('map')
+var geoadminUrl = 'http://wms.geo.admin.ch/?';
+var basemaps = {
+		'Landeskarten': L.tileLayer.wms(geoadminUrl, {
+			layers: 'ch.swisstopo.pixelkarte-farbe',
+			format: 'image/jpeg',
+			detectRetina: true,
+	  }),
+		'Swissimage': L.tileLayer.wms(geoadminUrl, {
+			layers: 'ch.swisstopo.swissimage',
+			format: 'image/jpeg',
+			detectRetina: true,
+	  }),
+};
+var overlays = {
+		'Luftfahrthindernisse': L.tileLayer.wms(geoadminUrl, {
+				layers: 'ch.bazl.luftfahrthindernis',
+				format: 'image/png',
+				transparent: true,
+	    }),
+};
+L.control.layers(basemaps, overlays).addTo(map);
+var layer = basemaps["Landeskarten"];
+map.addLayer(layer);
+var layer = overlays["Luftfahrthindernisse"];
+map.addLayer(layer);
+map.setView(L.latLng(46.93534, 7.45176), 13);
+map.attributionControl.addAttribution('&copy; Daten:<a href="https://swisstopo.ch">swisstopo</a>')
+
+// Localisation
+map.on('locationfound', onLocationFound);
+map.on('locationerror', onLocationError);
+map.locate({setView: true, maxZoom: 16});
+function onLocationFound(e) {
+		const radius = e.accuracy / 2;
+		const locationCircle = L.circle(e.latlng, radius).addTo(map);
+	}
+
+function onLocationError(e) {
+		//alert(e.message);
+	}
+
+
+var markersList = []
+var markersTXT = ""
+
+// add marker on click
+map.on("click", addMarker);
+
+function addMarker(e) {
+  const marker = new L.marker(e.latlng, {draggable: false})
+    .addTo(map)
+    .bindPopup(buttonRemove);
+  // save set marker in a list
+  markersList.push(Number((marker.getLatLng().lat).toFixed(7)) + ', ' + Number((marker.getLatLng().lng).toFixed(7)))
+  // event remove marker
+  marker.on("popupopen", removeMarker);
+  // event draged marker
+  marker.on("dragend", dragedMaker);
+}
+const buttonRemove =
+  '<button type="button" class="remove">Löschen</button>';
+// remove marker
+function removeMarker() {
+  const marker = this;
+  const btn = document.querySelector(".remove");
+  btn.addEventListener("click", function () {
+  map.removeLayer(marker);
+  // delete marker from list
+  var index = markersList.indexOf(Number((marker.getLatLng().lat).toFixed(7)) + ', ' + Number((marker.getLatLng().lng).toFixed(7)))
+  markersList.splice(index,1)
+  });
+}
+// draged
+function dragedMaker() {
+  //var markerTXTdragNEW = `${this.getLatLng().lat}, ${this.getLatLng().lng}`;
+  //alert(markerTXTdragNEW)
+  }
+function convertMarkerList() {
+	var arrayLength = markersList.length;
+	for (var i = 0; i < arrayLength; i++) {
+    markersTXT = markersTXT + "%0D%0A  " + markersList[i];
+	}
+}
+
+function send() {
+        convertMarkerList();
+		window.open(
+		'mailto:michael.zwick@swisstopo.ch?' +
+		'subject=Crowdsourcing Seil&' +
+		'body=#Crowdsourcing #Seil' + "%0D%0A" +
+		'Markers:' + markersTXT + "%0D%0A" +
+		'Object: ' + document.querySelector('input[name="object"]:checked').value + "%0D%0A" +
+		'Description: ' + document.getElementById("desc").value + "%0D%0A" +
+		'E-Mail: ' + document.getElementById("email").value + "%0D%0A" +
+		'Attachement: ' + document.getElementById("myfile").value);
+      }
+</script>
+  
+</body>
+</html>
