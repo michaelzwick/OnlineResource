@@ -31,7 +31,7 @@
 	  font-family: Arial, sans-serif;
 	}
 	
-	formular {
+	form {
 	  margin-left: auto;
       margin-right: auto;
 	  width: 500px;
@@ -67,9 +67,9 @@
 	</section>
 	
 	<section id="section4">
-	<form id="formular" action="">
+	<form action="">
 	  <label for="gender">Ist an der markierten/gewählten Position ein Seil vorhanden oder ersichtlich? (erforderlich): </label><br>
-	  <input type="radio" name="object" value="true" checked required> Ja<br>
+	  <input type="radio" name="object" value="ture" checked required> Ja<br>
 	  <input type="radio" name="object" value="false"> Nein<br><br>
 	  <label for="description">Beschreibung (erforderlich):</label><br>
 	  <textarea id="desc" name="desc" rows="4" cols="42" required>Test</textarea>
@@ -78,12 +78,19 @@
 	  <input type="email" id="email" pattern="[^@\s]+@[^@\s]+\.[^@\s]+" size="40"><br><br>
 	  <label for="myfile">Datei hinzufügen:</label>
       <input type="file" id="myfile" name="myfile" /><br><br>
-	  Mit dem Absenden Ihrer Meldung erklären Sie sich mit den Nutzungsbedingungen [verlinken] einverstanden.<br>
+	  Mit dem Absenden Ihrer Meldung erklären Sie sich mit den Nutzungsbedingungen [verlinken] einverstanden.<br><br>
 	  <input type="submit" value="Senden" onclick="return send();">
+	  <p id="feedback" style="color:green; font-weight: bold;"></p>
 	</form>
-	</section>	
+	<a href="#section5"><img src="https://cdn3.iconfinder.com/data/icons/arrow-outline-8/32/down_2_1-48.png" alt="Arrow" width="48" height="48"></a>
+	</section>
 	
 	<section id="section5" class="gray-box">
+	<h2>Was passiert mit ihrer Mitteilung?</h2>
+	<p>Ihre Meldung wird bei swisstopo in den Produktions- und Nachführungsprozess eingeführt. swisstopo erfasst/löscht die gemeldeten Elemente im Topografischen Landschaftsmodell. Daraus abgeleitet werden wiederum diverse Geodatenprodukte wie etwa die Karten, das Höhenmodell oder 3D-Objekte.</p>
+	</section>
+	
+	<section id="section6">
 	<p>Impressum: Bundesamt für Landestopografie swisstopo | Seftigenstrasse 264 | 3084 Wabern</p>
 	<a href="#section1"><img src="https://cdn3.iconfinder.com/data/icons/arrow-outline-8/32/up_2_1-48.png" alt="Arrow" width="48" height="48"></a>
 	</section>
@@ -91,7 +98,7 @@
 
 <script>
 // initialize the map
-var map = L.map('map')
+var map = L.map('map', {minZoom: 9, maxZoom: 18});
 var geoadminUrl = 'http://wms.geo.admin.ch/?';
 var basemaps = {
 		'Landeskarten': L.tileLayer.wms(geoadminUrl, {
@@ -106,8 +113,8 @@ var basemaps = {
 	  }),
 };
 var overlays = {
-		'Luftfahrthindernisse': L.tileLayer.wms(geoadminUrl, {
-				layers: 'ch.bazl.luftfahrthindernis',
+		'Seilbahnen ': L.tileLayer.wms(geoadminUrl, {
+				layers: 'ch.swisstopo.swisstlm3d-uebrigerverkehr',
 				format: 'image/png',
 				transparent: true,
 	    }),
@@ -115,15 +122,15 @@ var overlays = {
 L.control.layers(basemaps, overlays).addTo(map);
 var layer = basemaps["Landeskarten"];
 map.addLayer(layer);
-var layer = overlays["Luftfahrthindernisse"];
+var layer = overlays["Seilbahnen "];
 map.addLayer(layer);
-map.setView(L.latLng(46.93534, 7.45176), 13);
-map.attributionControl.addAttribution('&copy; Daten:<a href="https://swisstopo.ch">swisstopo</a>')
+map.setView(L.latLng(46.9, 8.3), 8);
+map.attributionControl.addAttribution('&copy; <a href="https://swisstopo.ch">swisstopo</a>')
 
 // Localisation
 map.on('locationfound', onLocationFound);
 map.on('locationerror', onLocationError);
-map.locate({setView: true, maxZoom: 16});
+map.locate({setView: true, maxZoom: 15});
 function onLocationFound(e) {
 		const radius = e.accuracy / 2;
 		const locationCircle = L.circle(e.latlng, radius).addTo(map);
@@ -132,7 +139,6 @@ function onLocationFound(e) {
 function onLocationError(e) {
 		//alert(e.message);
 	}
-
 
 var markersList = []
 var markersTXT = ""
@@ -172,22 +178,54 @@ function dragedMaker() {
 function convertMarkerList() {
 	var arrayLength = markersList.length;
 	for (var i = 0; i < arrayLength; i++) {
-    markersTXT = markersTXT + "%0D%0A  " + markersList[i];
+	var en = latlng2en(markersList[i]);
+    markersTXT = markersTXT + "%0D%0A  " + markersList[i] +
+	" => " +
+	"https://map.geo.admin.ch/?bgLayer=ch.swisstopo.pixelkarte-farbe" + "%26" + 
+	"crosshair=marker" + "%26" + 
+	"E=" + en[0] + "%26" + 
+	"N=" + en[1] + "%26" + 
+	"zoom=10";
 	}
 }
 
+function latlng2en(latlng){
+	var lat = latlng.split(",")[0].replace(" ", "");
+	var lng = latlng.split(",")[1].replace(" ", "");
+	var url = "http://geodesy.geo.admin.ch/reframe/wgs84tolv95?easting=" + lng + "&northing=" + lat + "&format=json";
+	var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open( "GET", url, false );
+    xmlHttp.send( null );
+    var json = xmlHttp.responseText;
+	var e = Number(JSON.parse(json)["easting"]).toFixed(3);
+	var n = Number(JSON.parse(json)["northing"]).toFixed(3);
+	return [e, n];
+}
+
+function test(){
+	alert('asdf')
+}
+
 function send() {
-        convertMarkerList();
-		window.open(
-		'mailto:michael.zwick@swisstopo.ch?' +
-		'subject=Crowdsourcing Seil&' +
-		'body=#Crowdsourcing #Seil' + "%0D%0A" +
-		'Markers:' + markersTXT + "%0D%0A" +
-		'Object: ' + document.querySelector('input[name="object"]:checked').value + "%0D%0A" +
-		'Description: ' + document.getElementById("desc").value + "%0D%0A" +
-		'E-Mail: ' + document.getElementById("email").value + "%0D%0A" +
-		'Attachement: ' + document.getElementById("myfile").value);
-      }
+	const feedback = document.getElementById("feedback");
+	feedback.innerHTML = "Danke für Ihre Meldung.";
+	markersTXT = ""
+	convertMarkerList();
+	var extent = map.getBounds().toBBoxString().split(',');
+	extent.forEach((element, index) => {
+	  extent[index] = Number(element).toFixed(7);
+	});
+	window.open(
+	'mailto:michael.zwick@swisstopo.ch?' +
+	'subject=Crowdsourcing Seil&' +
+	'body=#Crowdsourcing #Seil' + "%0D%0A" + "%0D%0A" +
+	'Markers: ' + markersTXT + "%0D%0A" +
+	'View BBox: ' + extent + "%0D%0A" +
+	'Object: ' + document.querySelector('input[name="object"]:checked').value + "%0D%0A" +
+	'Description: ' + document.getElementById("desc").value + "%0D%0A" +
+	'E-Mail: ' + document.getElementById("email").value + "%0D%0A" +
+	'Attachement: ' + document.getElementById("myfile").value);
+  }
 </script>
   
 </body>
