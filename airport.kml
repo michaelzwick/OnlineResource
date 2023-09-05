@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<kml xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:atom="http://www.w3.org/2005/Atom" xmlns="http://www.opengis.net/kml/2.2">
+<Document>
+<name>airport</name>
+<visibility>1</visibility>
+<Folder id="kml_ft_airport">
+<name>airport</name>
+<Placemark id="kml_1">
+<name>kml_1</name>
+<Model>
+<Location>
+<longitude>9.90203080080964</longitude>
+<latitude>46.52182170777361</latitude>
+<altitude>0</altitude>
+</Location>
+<Link>
+<href>models/model.dae</href>
+</Link>
+</Model>
+</Placemark>
+</Folder>
+</Document></kml>
