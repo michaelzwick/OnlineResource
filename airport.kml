@@ -15,7 +15,7 @@
 <altitude>0</altitude>
 </Location>
 <Link>
-<href>models/model.dae</href>
+<href>model.dae</href>
 </Link>
 </Model>
 </Placemark>
