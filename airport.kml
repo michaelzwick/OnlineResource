@@ -15,7 +15,7 @@
 <altitude>0</altitude>
 </Location>
 <Link>
-<href>model.dae</href>
+<href>https://raw.githubusercontent.com/michaelzwick/OnlineResource/master/model.daee</href>
 </Link>
 </Model>
 </Placemark>
